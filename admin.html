@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Panel — Job Card Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #0078b7;
+  --accent: #005a8f;
+  --light: #eaf6ff;
+  --bg: linear-gradient(135deg, #f0f8ff, #d6ecff);
+  --glass: rgba(255, 255, 255, 0.85);
+  --radius: 14px;
+  --shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg);
+  margin: 0;
+  color: #0f3b5e;
+  padding: 30px 10px;
+}
+
+.container {
+  width: 95%;
+  max-width: 1050px;
+  margin: auto;
+  background: var(--glass);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 30px;
+  backdrop-filter: blur(10px);
+}
+
+h1 {
+  text-align: center;
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 28px;
+  letter-spacing: 0.3px;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+nav button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.25s;
+}
+nav button:hover { background: var(--accent); transform: translateY(-1px); }
+nav button.active { background: var(--accent); }
+
+.section { display: none; }
+.section.active { display: block; }
+
+input, select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #cde2f7;
+  border-radius: 6px;
+  background: #f9fcff;
+  margin-bottom: 10px;
+}
+
+button.small {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 600;
+  transition: 0.2s;
+}
+button.small:hover { opacity: 0.8; }
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+th { background: var(--light); color: var(--primary); text-align: left; }
+tr:hover td { background: #f5fbff; }
+
+.preview-img {
+  width: 100px;
+  height: 50px;
+  object-fit: contain;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+h3 {
+  color: var(--accent);
+  margin-top: 24px;
+  font-size: 18px;
+  border-left: 4px solid var(--primary);
+  padding-left: 8px;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.stat {
+  flex: 1 1 180px;
+  background: white;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  padding: 12px;
+}
+.stat h2 { color: var(--primary); margin: 0; font-size: 26px; }
+.stat p { margin: 0; color: #555; }
+
+.status-pill {
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+.status-pending { background: #f9a825; }
+.status-progress { background: #2196f3; }
+.status-done { background: #43a047; }
+
+@media(max-width:768px) {
+  .stat { flex: 1 1 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🧭 Job Card Admin Dashboard</h1>
+
+  <nav>
+    <button class="active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+    <button onclick="switchTab('staff')">👥 Staff</button>
+    <button onclick="switchTab('jobs')">📋 Jobs</button>
+    <button onclick="switchTab('services')">🧾 Services</button>
+    <button onclick="switchTab('settings')">⚙️ Company</button>
+  </nav>
+
+  <!-- DASHBOARD -->
+  <div class="section active" id="dashboard">
+    <div class="stats">
+      <div class="stat"><h2 id="totalJobs">0</h2><p>Total Jobs</p></div>
+      <div class="stat"><h2 id="completedJobs">0</h2><p>Completed</p></div>
+      <div class="stat"><h2 id="activeStaff">0</h2><p>Active Staff</p></div>
+      <div class="stat"><h2 id="blockedStaff">0</h2><p>Blocked Staff</p></div>
+    </div>
+    <p style="text-align:center;">Welcome, <b>Admin</b> 👋 Manage your print shop workflow efficiently.</p>
+  </div>
+
+  <!-- STAFF -->
+  <div class="section" id="staff">
+    <h3>➕ Add Staff</h3>
+    <input id="staffName" placeholder="Full Name">
+    <select id="staffRole"><option>Designer/Operator</option><option>Machine Operator</option></select>
+    <input id="staffContact" placeholder="Contact / Email">
+    <button onclick="addStaff()">Add Staff</button>
+
+    <h3>👥 Staff List</h3>
+    <table class="table" id="staffTable">
+      <thead><tr><th>Name</th><th>Role</th><th>Contact</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- JOBS -->
+  <div class="section" id="jobs">
+    <h3>📋 Job Progress Tracker</h3>
+    <table class="table" id="jobTable">
+      <thead><tr><th>Job No.</th><th>Client</th><th>Assigned</th><th>Role</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- SERVICES -->
+  <div class="section" id="services">
+    <h3>🧾 Service Defaults</h3>
+    <table class="table" id="serviceTable">
+      <thead><tr><th>Service</th><th>Qty</th><th>Price</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">
+      <input id="newService" placeholder="Service Name">
+      <input id="newQty" type="number" placeholder="Qty" style="width:100px;">
+      <input id="newPrice" type="number" placeholder="Price" style="width:100px;">
+      <button onclick="addService()">Add</button>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="section" id="settings">
+    <h3>🏢 Company Info</h3>
+    <input id="companyName" placeholder="Company Name">
+    <input id="companySub" placeholder="Company Subtitle">
+
+    <h3>🖼️ Logo</h3>
+    <input type="file" accept="image/*" id="logoInput" onchange="uploadImage(event, 'companyLogoPreview', 'companyLogo')">
+    <img id="companyLogoPreview" class="preview-img" alt="Logo Preview">
+
+    <h3>✍️ Signatures</h3>
+    <label>Operator Signature</label>
+    <input type="file" accept="image/*" id="opSign" onchange="uploadImage(event, 'opSignPreview', 'operatorSign')">
+    <img id="opSignPreview" class="preview-img">
+    <label>Machine Operator Signature</label>
+    <input type="file" accept="image/*" id="macSign" onchange="uploadImage(event, 'macSignPreview', 'machineSign')">
+    <img id="macSignPreview" class="preview-img">
+
+    <button onclick="saveCompany()">Save Company Settings</button>
+  </div>
+</div>
+
+<script>
+// Navigation
+function switchTab(id){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelector(`button[onclick*="${id}"]`).classList.add('active');
+  document.getElementById(id).classList.add('active');
+  refreshStats();
+  loadStaff(); loadJobs(); loadServices();
+}
+
+// STAFF SYSTEM
+let staffList = JSON.parse(localStorage.getItem('staffList')) || [
+  {name:"Ravi Kumar", role:"Designer/Operator", contact:"ravi@edm.com", status:"Active"},
+  {name:"Anjali Singh", role:"Machine Operator", contact:"anjali@edm.com", status:"Active"},
+  {name:"Suresh Das", role:"Machine Operator", contact:"suresh@edm.com", status:"Blocked"}
+];
+function addStaff(){
+  const n=document.getElementById('staffName').value.trim();
+  const r=document.getElementById('staffRole').value;
+  const c=document.getElementById('staffContact').value;
+  if(!n)return alert("Enter name");
+  staffList.push({name:n,role:r,contact:c,status:'Active'});
+  localStorage.setItem('staffList',JSON.stringify(staffList));
+  loadStaff();
+}
+function loadStaff(){
+  const tbody=document.querySelector('#staffTable tbody');
+  tbody.innerHTML='';
+  staffList.forEach((s,i)=>{
+    tbody.innerHTML+=`<tr>
+      <td>${s.name}</td>
+      <td>${s.role}</td>
+      <td>${s.contact}</td>
+      <td>${s.status}</td>
+      <td>
+        <button class="small" style="background:#ff9800" onclick="toggleStaff(${i})">${s.status==='Active'?'Block':'Unblock'}</button>
+        <button class="small" style="background:#e53935" onclick="deleteStaff(${i})">Delete</button>
+      </td>
+    </tr>`;
+  });
+}
+function toggleStaff(i){
+  staffList[i].status=staffList[i].status==='Active'?'Blocked':'Active';
+  localStorage.setItem('staffList',JSON.stringify(staffList));
+  loadStaff();
+}
+function deleteStaff(i){
+  if(confirm("Delete this staff?")){
+    staffList.splice(i,1);
+    localStorage.setItem('staffList',JSON.stringify(staffList));
+    loadStaff();
+  }
+}
+
+// JOBS
+let jobList = JSON.parse(localStorage.getItem('jobList')) || [
+  {slno:11643, client:"Creative Prints", assignedTo:"Ravi Kumar", role:"Designer/Operator", status:"In Progress", statusClass:"status-progress"},
+  {slno:11644, client:"BlueBox Media", assignedTo:"Anjali Singh", role:"Machine Operator", status:"Completed", statusClass:"status-done"},
+  {slno:11645, client:"GreenEdge Ads", assignedTo:"-", role:"-", status:"Pending", statusClass:"status-pending"}
+];
+function loadJobs(){
+  const tbody=document.querySelector('#jobTable tbody');
+  tbody.innerHTML='';
+  if(!jobList.length)return tbody.innerHTML='<tr><td colspan="6" style="text-align:center;">No Jobs</td></tr>';
+  const options = staffList.map(s=>`<option>${s.name}</option>`).join('');
+  jobList.forEach((j,i)=>{
+    tbody.innerHTML+=`<tr>
+      <td>${j.slno}</td><td>${j.client}</td>
+      <td><select onchange="assign(${i},this.value)"><option>${j.assignedTo}</option>${options}</select></td>
+      <td>${j.role}</td>
+      <td><span class="status-pill ${j.statusClass}">${j.status}</span></td>
+      <td>
+        <select onchange="updateStatus(${i},this.value)">
+          <option ${j.status==='Pending'?'selected':''}>Pending</option>
+          <option ${j.status==='In Progress'?'selected':''}>In Progress</option>
+          <option ${j.status==='Completed'?'selected':''}>Completed</option>
+        </select>
+      </td></tr>`;
+  });
+}
+function assign(i,val){
+  const st=staffList.find(x=>x.name===val);
+  if(st){ jobList[i].assignedTo=st.name; jobList[i].role=st.role; }
+  localStorage.setItem('jobList',JSON.stringify(jobList)); loadJobs();
+}
+function updateStatus(i,val){
+  jobList[i].status=val;
+  jobList[i].statusClass = val==='Pending'?'status-pending':val==='In Progress'?'status-progress':'status-done';
+  localStorage.setItem('jobList',JSON.stringify(jobList)); loadJobs();
+}
+
+// SERVICES
+let serviceDefaults = JSON.parse(localStorage.getItem('serviceDefaults')) || {
+  "Visiting Card":{qty:100,price:200},
+  "Flex Printing":{qty:10,price:300},
+  "Poster":{qty:20,price:350}
+};
+function loadServices(){
+  const tbody=document.querySelector('#serviceTable tbody');
+  tbody.innerHTML='';
+  Object.entries(serviceDefaults).forEach(([name,d])=>{
+    tbody.innerHTML+=`<tr><td><input value="${name}" class="input name"></td>
+    <td><input type="number" value="${d.qty}" class="input qty"></td>
+    <td><input type="number" value="${d.price}" class="input price"></td></tr>`;
+  });
+}
+function addService(){
+  const n=document.getElementById('newService').value.trim();
+  const q=parseInt(document.getElementById('newQty').value)||0;
+  const p=parseInt(document.getElementById('newPrice').value)||0;
+  if(!n)return alert("Enter service name");
+  serviceDefaults[n]={qty:q,price:p};
+  localStorage.setItem('serviceDefaults',JSON.stringify(serviceDefaults));
+  loadServices();
+}
+
+// COMPANY SETTINGS
+function uploadImage(e,preview,key){
+  const file=e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    document.getElementById(preview).src=ev.target.result;
+    localStorage.setItem(key,ev.target.result);
+  }
+  reader.readAsDataURL(file);
+}
+function saveCompany(){
+  localStorage.setItem('companyName',document.getElementById('companyName').value);
+  localStorage.setItem('companySub',document.getElementById('companySub').value);
+  alert("✅ Saved!");
+}
+
+// DASHBOARD
+function refreshStats(){
+  document.getElementById('totalJobs').innerText=jobList.length;
+  document.getElementById('completedJobs').innerText=jobList.filter(j=>j.status==='Completed').length;
+  document.getElementById('activeStaff').innerText=staffList.filter(s=>s.status==='Active').length;
+  document.getElementById('blockedStaff').innerText=staffList.filter(s=>s.status==='Blocked').length;
+}
+
+// INIT
+loadStaff(); loadJobs(); loadServices(); refreshStats();
+</script>
+</body>
+</html>
