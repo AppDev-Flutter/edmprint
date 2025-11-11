@@ -188,6 +188,21 @@
 </head>
 <body>
 
+<!-- Admin & Operator Buttons -->
+<div style="position:fixed; top:20px; right:20px; z-index:100; display:flex; flex-direction:column; gap:10px;">
+  <button class="btn" onclick="goToAdmin()">🔑 Admin Login</button>
+  <button class="btn secondary" onclick="goToOperator()">👷 Operator Panel</button>
+</div>
+
+<script>
+function goToAdmin() {
+  window.location.href = 'admin.html';
+}
+function goToOperator() {
+  window.location.href = 'operator.html';
+}
+</script>
+
 <div class="job-card">
   <div class="header">
     <div class="logo">
@@ -275,7 +290,7 @@
   </div>
 
   <div style="text-align:right;margin-top:20px;">
-    <button class="btn" onclick="createJobCard()">Create Job Card</button>
+    <button class="btn" onclick="createJobCard()">Preview</button>
   </div>
 </div>
 
@@ -370,6 +385,7 @@ function createJobCard(){
   .small-box{display:flex;justify-content:space-between;padding:8px;border:1px solid rgba(0,0,0,0.08);
   border-radius:6px;background:rgba(255,255,255,0.9);margin-top:6px;}
   .signature-img{width:100px;height:40px;object-fit:contain;}
+  .btn{background:#0078b7;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;font-weight:600;margin-top:20px;}
   </style></head><body>
   <div class='job-card'>
     <div class='header'>
@@ -391,6 +407,9 @@ function createJobCard(){
     <div style='display:flex;gap:12px;margin-top:20px;'>
       <div class='small-box'><div>Operator Signature</div><img src='https://clipart-library.com/images/8TEbRgRGc.jpg' class='signature-img'></div>
       <div class='small-box'><div>Machine Operator Signature</div><img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRn0qwgeE8aOabkYWl1cqvUb0CWeWj98nX6Eg&s' class='signature-img'></div>
+    </div>
+    <div style='text-align:right;'>
+      <button class='btn' onclick='alert("Job Card Created Successfully ✅")'>Create Job Card</button>
     </div>
   </div></body></html>`;
 
