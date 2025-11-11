@@ -181,6 +181,14 @@
 
   /* 📱 Responsive Styling */
   @media (max-width: 768px) {
+    body {
+      padding: 10px; /* 🔹 reduced outer spacing */
+    }
+
+    .job-card {
+      padding: 12px; /* 🔹 reduced inner padding */
+    }
+
     .header {
       flex-direction: column;
       align-items: flex-start;
@@ -210,6 +218,14 @@
   }
 
   @media (max-width: 480px) {
+    body {
+      padding: 8px; /* 🔹 even tighter for small screens */
+    }
+
+    .job-card {
+      padding: 10px; /* 🔹 compact card padding */
+    }
+
     .logo-circle {
       width: 60px;
       height: 60px;
@@ -226,6 +242,7 @@
 
     .input, select, textarea {
       font-size: 13px;
+      padding: 6px; /* 🔹 reduced input padding */
     }
 
     .summary input {
@@ -233,6 +250,7 @@
     }
   }
 </style>
+
 </head>
 <body>
 
@@ -376,4 +394,5 @@ function calculateTotal(){
 
 </body>
 </html>
+
 
