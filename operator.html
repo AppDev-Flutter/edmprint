@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Operator Dashboard — Job Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #0078b7;
+  --accent: #005a8f;
+  --bg: linear-gradient(135deg, #f0f8ff, #d6ecff);
+  --glass: rgba(255,255,255,0.88);
+  --text: #0f3b5e;
+  --shadow: 0 6px 18px rgba(0,0,0,0.15);
+  --radius: 14px;
+}
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding: 20px;
+  transition: 0.4s;
+}
+body.dark {
+  --bg: linear-gradient(135deg, #101820, #16232f);
+  --glass: rgba(25,35,45,0.9);
+  --text: #f8f9fa;
+}
+.container {
+  width: 95%;
+  max-width: 1150px;
+  margin: auto;
+  background: var(--glass);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 25px;
+  backdrop-filter: blur(10px);
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+h1 {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--primary);
+  margin: 0;
+}
+.clock {
+  color: var(--accent);
+  font-weight: 600;
+}
+.toggle, .viewAllBtn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.25s;
+}
+.toggle:hover, .viewAllBtn:hover { background: var(--accent); }
+
+.stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 25px;
+}
+.stat {
+  flex: 1 1 200px;
+  background: linear-gradient(120deg, #e3f4ff, #cfeaff);
+  border-radius: 10px;
+  text-align: center;
+  padding: 18px;
+  box-shadow: var(--shadow);
+  transition: 0.3s;
+}
+.stat:hover { transform: scale(1.03); }
+.stat h2 { margin: 0; font-size: 28px; color: var(--accent); }
+.stat p { margin: 0; color: #555; }
+
+.jobs-section { margin-top: 30px; }
+h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+  border-left: 4px solid var(--primary);
+  padding-left: 8px;
+}
+.job-card {
+  background: rgba(255,255,255,0.95);
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: var(--shadow);
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.job-info h4 { margin: 0; font-size: 16px; }
+.job-info p { margin: 2px 0; font-size: 13px; color: #555; }
+.status-pill {
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+.status-pending { background: #f9a825; }
+.status-progress { background: #2196f3; }
+.status-done { background: #43a047; }
+button.small {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 600;
+  transition: 0.25s;
+}
+button.small:hover { opacity: 0.8; }
+
+.history {
+  background: rgba(255,255,255,0.9);
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 40px;
+  box-shadow: var(--shadow);
+}
+.history table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+th {
+  background: var(--light);
+  text-align: left;
+  color: var(--primary);
+}
+select {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #cde2f7;
+  background: #f9fcff;
+}
+
+/* Drawer */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 360px;
+  height: 100%;
+  background: var(--glass);
+  box-shadow: -4px 0 10px rgba(0,0,0,0.3);
+  padding: 20px;
+  transition: right 0.4s ease;
+  overflow-y: auto;
+  z-index: 1000;
+}
+.drawer.active { right: 0; }
+.drawer h3 { margin-top: 0; }
+.drawer table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.drawer th, .drawer td { padding: 8px; border-bottom: 1px solid #ddd; }
+.drawer button {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-top: 15px;
+  cursor: pointer;
+}
+.drawer button:hover { background: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>Operator Command Center</h1>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <div id="clock" class="clock"></div>
+      <button class="viewAllBtn" onclick="toggleDrawer()">📁 View All Job Cards</button>
+      <button class="toggle" onclick="toggleTheme()">🌙</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat"><h2 id="todayCount">4</h2><p>Jobs Today</p></div>
+    <div class="stat"><h2 id="progressCount">2</h2><p>In Progress</p></div>
+    <div class="stat"><h2 id="doneCount">1</h2><p>Completed</p></div>
+    <div class="stat"><h2 id="pendingCount">1</h2><p>Pending</p></div>
+  </div>
+
+  <!-- TODAY'S JOBS -->
+  <div class="jobs-section" id="todayJobs">
+    <h3>📅 Jobs Created Today</h3>
+
+    <div class="job-card" data-job="11646">
+      <div class="job-info">
+        <h4>Job #11646 — Om Sai Graphics</h4>
+        <p>Status: <span class="status-pill status-pending">Pending</span></p>
+        <p class="picked-by"></p>
+      </div>
+      <button class="small" style="background:#0078b7" onclick="pickJob(this)">Pick</button>
+    </div>
+
+    <div class="job-card" data-job="11647">
+      <div class="job-info">
+        <h4>Job #11647 — Creative Prints</h4>
+        <p>Status: <span class="status-pill status-progress">In Progress</span></p>
+        <p class="picked-by">Picked by: Pawan Kumar</p>
+      </div>
+      <button class="small" style="background:#ccc" disabled>In Progress</button>
+    </div>
+
+    <div class="job-card" data-job="11648">
+      <div class="job-info">
+        <h4>Job #11648 — Urban Ink Studio</h4>
+        <p>Status: <span class="status-pill status-pending">Pending</span></p>
+        <p class="picked-by"></p>
+      </div>
+      <button class="small" style="background:#0078b7" onclick="pickJob(this)">Pick</button>
+    </div>
+
+    <div class="job-card" data-job="11649">
+      <div class="job-info">
+        <h4>Job #11649 — Prime Media Works</h4>
+        <p>Status: <span class="status-pill status-done">Completed</span></p>
+        <p class="picked-by">Picked by: Ravi Kumar</p>
+      </div>
+      <button class="small" style="background:#ccc" disabled>Completed</button>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="history">
+    <h3>📜 My Work History</h3>
+    <table id="historyTable">
+      <thead><tr><th>Job No.</th><th>Client</th><th>Status</th><th>Time</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr data-job="11647"><td>11647</td><td>Creative Prints</td><td><span class="status-pill status-progress">In Progress</span></td><td>12 Nov 2025, 10:22 AM</td><td><button class="small" style="background:#43a047" onclick="updateHistoryStatus(this)">Mark Done</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Drawer (All Jobs) -->
+<div class="drawer" id="drawer">
+  <h3>📁 All Job Cards</h3>
+  <table>
+    <thead><tr><th>Job No.</th><th>Client</th><th>Date</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>11640</td><td>BlueBox Media</td><td>10 Nov 2025</td><td><span class="status-pill status-done">Completed</span></td></tr>
+      <tr><td>11641</td><td>GreenEdge Ads</td><td>11 Nov 2025</td><td><span class="status-pill status-progress">In Progress</span></td></tr>
+      <tr><td>11642</td><td>Creative Minds</td><td>11 Nov 2025</td><td><span class="status-pill status-pending">Pending</span></td></tr>
+      <tr><td>11643</td><td>Om Sai Graphics</td><td>12 Nov 2025</td><td><span class="status-pill status-done">Completed</span></td></tr>
+      <tr><td>11644</td><td>Poster Hub</td><td>12 Nov 2025</td><td><span class="status-pill status-progress">In Progress</span></td></tr>
+    </tbody>
+  </table>
+  <button onclick="toggleDrawer()">Close</button>
+</div>
+
+<script>
+const operators = ["Ravi Kumar","Anjali Singh","Suresh Das"];
+
+// PICK JOB
+function pickJob(btn){
+  const card = btn.closest('.job-card');
+  const client = card.querySelector('h4').innerText.split('—')[1].trim();
+  btn.outerHTML = `<select onchange="assignJob(this)">
+    <option value="">Select Operator</option>
+    ${operators.map(o=>`<option>${o}</option>`).join('')}
+  </select>`;
+}
+
+// ASSIGN JOB
+function assignJob(sel){
+  if(!sel.value)return;
+  const card = sel.closest('.job-card');
+  const operator = sel.value;
+  const jobId = card.dataset.job;
+  const statusEl = card.querySelector('.status-pill');
+  statusEl.className = 'status-pill status-progress';
+  statusEl.innerText = 'In Progress';
+  card.querySelector('.picked-by').innerText = 'Picked by: '+operator;
+  sel.outerHTML = `<button class="small" style="background:#ccc" disabled>In Progress</button>`;
+  addHistory(jobId, card.querySelector('h4').innerText.split('—')[1].trim(), 'In Progress', operator);
+  refreshCounts();
+}
+
+// UPDATE STATUS FROM HISTORY
+function updateHistoryStatus(btn){
+  const tr = btn.closest('tr');
+  const jobId = tr.dataset.job;
+  tr.querySelector('.status-pill').className='status-pill status-done';
+  tr.querySelector('.status-pill').innerText='Completed';
+  btn.outerHTML = `<button class="small" style="background:#ccc" disabled>Completed</button>`;
+  const card = document.querySelector(`.job-card[data-job="${jobId}"]`);
+  if(card){
+    card.querySelector('.status-pill').className='status-pill status-done';
+    card.querySelector('.status-pill').innerText='Completed';
+    card.querySelector('button').outerHTML=`<button class="small" style="background:#ccc" disabled>Completed</button>`;
+  }
+  refreshCounts();
+}
+
+// ADD TO HISTORY
+function addHistory(jobNo, client, status, operator){
+  const now=new Date();
+  const time=now.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})+", "+now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  const tb=document.querySelector('#historyTable tbody');
+  const tr=document.createElement('tr');
+  tr.setAttribute('data-job', jobNo);
+  tr.innerHTML=`<td>${jobNo}</td><td>${client}</td><td><span class="status-pill status-progress">In Progress</span></td><td>${time}</td><td><button class="small" style="background:#43a047" onclick="updateHistoryStatus(this)">Mark Done</button></td>`;
+  tb.prepend(tr);
+}
+
+// COUNT REFRESH
+function refreshCounts(){
+  const cards=document.querySelectorAll('.job-card');
+  const total=cards.length;
+  const progress=[...cards].filter(c=>c.querySelector('.status-pill').classList.contains('status-progress')).length;
+  const done=[...cards].filter(c=>c.querySelector('.status-pill').classList.contains('status-done')).length;
+  const pending=[...cards].filter(c=>c.querySelector('.status-pill').classList.contains('status-pending')).length;
+  document.getElementById('todayCount').innerText=total;
+  document.getElementById('progressCount').innerText=progress;
+  document.getElementById('doneCount').innerText=done;
+  document.getElementById('pendingCount').innerText=pending;
+}
+
+// CLOCK, THEME, DRAWER
+function toggleTheme(){
+  document.body.classList.toggle('dark');
+  document.querySelector('.toggle').textContent=document.body.classList.contains('dark')?'☀️':'🌙';
+}
+function toggleDrawer(){
+  document.getElementById('drawer').classList.toggle('active');
+}
+function updateClock(){
+  const now=new Date();
+  document.getElementById('clock').textContent=now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(updateClock,1000);
+updateClock();
+refreshCounts();
+</script>
+
+</body>
+</html>
