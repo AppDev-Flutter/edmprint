@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Job Card — Fillable & Printable</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #eaf6ff;
+    --muted: #5c6f78;
+    --accent: #0078b7;
+    --bg-gradient: linear-gradient(135deg,#f0f6f9,#dbeeff);
+    --card-gradient: linear-gradient(180deg,var(--paper) 0%, #d4edfc 100%);
+    --border-light: rgba(0,0,0,0.08);
+    --text: #0f3745;
+    --input-bg: rgba(255,255,255,0.9);
+    --input-border: rgba(0,0,0,0.1);
+    --input-text: #0f3745;
+  }
+
+  body {
+    font-family: "Poppins", sans-serif;
+    background: var(--bg-gradient);
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    color: var(--text);
+  }
+
+  .job-card {
+    width: 860px;
+    background: var(--card-gradient);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.15);
+  }
+
+  .header { display: flex; align-items: flex-start; justify-content: space-between; }
+  .logo { display: flex; gap: 10px; align-items: center; }
+
+  .logo img {
+    width: 70px; height: 42px; border-radius: 8px;
+    object-fit: contain; border: 1px solid var(--border-light);
+  }
+
+  .job-right .title { font-weight: 800; font-size: 22px; color: var(--accent); }
+  .job-right .slno { margin-top: 4px; font-size: 13px; color: var(--muted); }
+
+  .input, select, textarea {
+    width: 100%; padding: 8px; border: 1px solid var(--input-border);
+    border-radius: 6px; background: var(--input-bg);
+    color: var(--input-text); font-size: 14px;
+  }
+
+  .label { font-weight: 700; font-size: 12px; color: var(--muted); margin-bottom: 4px; display:block; }
+
+  table {
+    margin-top: 16px; width: 100%; border-collapse: collapse;
+    border: 1px solid var(--border-light); background: var(--input-bg);
+  }
+
+  th, td { padding: 10px; border-bottom: 1px dashed var(--border-light); }
+  th { background: linear-gradient(90deg,#e8f7ff,#d2ecff); text-align: left; font-weight: 700; color: var(--accent); }
+  td input { text-align:center; }
+
+  .btn { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 8px 14px; cursor: pointer; font-weight: 600; transition: 0.25s; }
+  .btn.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+
+  .summary { text-align: right; margin-top: 12px; font-weight: 600; }
+  .summary input { width: 120px; text-align: right; font-weight: 600; }
+
+  .bottom-row { display: flex; gap: 12px; margin-top: 20px; }
+  .small-box {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; padding: 8px; border: 1px solid var(--border-light);
+    border-radius: 6px; background: var(--input-bg);
+  }
+
+  .signature-img { width: 100px; height: 40px; object-fit: contain; opacity: 0.9; }
+
+  textarea { resize: vertical; min-height: 60px; }
+
+  .footer-note { text-align: center; color: var(--muted); font-size: 12px; margin-top: 12px; }
+</style>
+</head>
+<body>
+
+<div class="job-card">
+  <div class="header">
+    <div class="logo">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Logo_TV_2015.png" alt="EDM Logo">
+      <div>
+        <input class="input" id="companyName" value="Elegance Digital Media">
+        <input class="input" id="companySub" value="Private Limited" style="margin-top:6px;font-size:12px;">
+      </div>
+    </div>
+    <div class="job-right">
+      <div class="title">JOB CARD</div>
+      <div class="slno">Sl. No.: <input id="slno" class="input" style="width:100px;" readonly></div>
+    </div>
+  </div>
+
+  <div class="to-date" style="display:flex;gap:12px;margin-top:18px;">
+    <div style="flex:1;">
+      <label class="label">To</label>
+      <input class="input" id="toName" value="B.M.I. SAFET">
+    </div>
+    <div style="width:170px;">
+      <label class="label">Date</label>
+      <input type="date" class="input" id="jobDate">
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:60px;">S.No.</th>
+        <th>Description</th>
+        <th style="width:80px;">Qty</th>
+        <th style="width:100px;">Price</th>
+        <th style="width:120px;text-align:center;">Action</th>
+      </tr>
+    </thead>
+    <tbody id="itemsBody">
+      <tr id="noServiceRow"><td colspan="5" style="text-align:center;color:var(--muted);">No services added yet — use "Add Service" below 👇</td></tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top:10px;">
+    <select id="serviceSelect" class="input" style="width:200px;" onchange="addServiceRow(this)">
+      <option value="">➕ Add Service</option>
+      <option>Visiting Card</option>
+      <option>Company Brochure</option>
+      <option>Flex Printing</option>
+      <option>Booklet</option>
+      <option>Letterhead</option>
+      <option>Poster</option>
+      <option>Sticker</option>
+      <option>Banner</option>
+    </select>
+  </div>
+
+  <div class="summary">
+    <div>Subtotal: ₹ <input id="subtotal" class="input" readonly></div>
+    <div style="margin-top:5px;">Discount: ₹ <input id="discount" class="input" value="0" oninput="calculateTotal()"></div>
+    <div style="margin-top:5px;">Final Total: ₹ <input id="finalTotal" class="input" readonly></div>
+  </div>
+
+  <div class="bottom-row">
+    <div style="flex:1;">
+      <div class="small-box"><div>Cutting</div><select id="cutting"><option>No</option><option>Yes</option></select></div>
+      <div class="small-box"><div>Creasing</div><select id="creasing"><option>No</option><option>Yes</option></select></div>
+    </div>
+    <div style="flex:1;">
+      <div class="small-box"><div>Lamination</div><select id="lamination"><option>No</option><option>Yes</option></select></div>
+      <div class="small-box"><div>Binding</div><select id="binding"><option>No</option><option>Yes</option></select></div>
+    </div>
+  </div>
+
+  <div class="bottom-row">
+    <div class="small-box" style="flex:1;">
+      <div>Operator Signature</div>
+      <img src="https://clipart-library.com/images/8TEbRgRGc.jpg" class="signature-img">
+    </div>
+    <div class="small-box" style="flex:1;">
+      <div>Machine Operator Signature</div>
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRn0qwgeE8aOabkYWl1cqvUb0CWeWj98nX6Eg&s" class="signature-img">
+    </div>
+  </div>
+
+  <div style="margin-top:20px;">
+    <label class="label">Description / Note</label>
+    <textarea id="description" class="input" placeholder="Add any additional notes..."></textarea>
+  </div>
+
+  <div style="text-align:right;margin-top:20px;">
+    <button class="btn" onclick="createJobCard()">Create Job Card</button>
+  </div>
+</div>
+
+<script>
+const serviceDefaults = {
+  "Visiting Card": { qty: 100, price: 200 },
+  "Company Brochure": { qty: 50, price: 500 },
+  "Flex Printing": { qty: 10, price: 300 },
+  "Booklet": { qty: 25, price: 400 },
+  "Letterhead": { qty: 100, price: 250 },
+  "Poster": { qty: 20, price: 350 },
+  "Sticker": { qty: 100, price: 150 },
+  "Banner": { qty: 10, price: 450 }
+};
+
+document.getElementById('jobDate').valueAsDate = new Date();
+let sl = localStorage.getItem('job_slno') || 11642;
+sl = parseInt(sl) + 1;
+document.getElementById('slno').value = sl;
+localStorage.setItem('job_slno', sl);
+
+function addServiceRow(sel){
+  if(!sel.value)return;
+  const tbody=document.getElementById('itemsBody');
+  const noRow=document.getElementById('noServiceRow');
+  if(noRow)noRow.remove();
+  const d=serviceDefaults[sel.value];
+  const rowCount=tbody.rows.length+1;
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td><input value="${rowCount}" class="input" readonly></td>
+  <td><input value="${sel.value}" class="input"></td>
+  <td><input type="number" value="${d.qty}" class="input qty" oninput="calculateTotal()"></td>
+  <td><input type="number" value="${d.price}" class="input price" oninput="calculateTotal()"></td>
+  <td style="text-align:center;"><button class="btn secondary" onclick="this.closest('tr').remove();calculateTotal()">–</button></td>`;
+  tbody.appendChild(tr);
+  sel.selectedIndex=0;
+  calculateTotal();
+}
+
+function calculateTotal(){
+  let subtotal=0;
+  document.querySelectorAll(".price").forEach(p=>{
+    subtotal+=(parseFloat(p.value)||0);
+  });
+  document.getElementById("subtotal").value=subtotal.toFixed(2);
+  const disc=parseFloat(document.getElementById("discount").value)||0;
+  document.getElementById("finalTotal").value=(subtotal-disc).toFixed(2);
+}
+
+// 🔹 Date format converter
+function formatDate(dateStr){
+  const [y,m,d]=dateStr.split("-");
+  return `${d}-${m}-${y}`;
+}
+
+function createJobCard(){
+  const company=document.getElementById('companyName').value;
+  const sub=document.getElementById('companySub').value;
+  const to=document.getElementById('toName').value;
+  const dateRaw=document.getElementById('jobDate').value;
+  const date=formatDate(dateRaw);
+  const slno=document.getElementById('slno').value;
+  const cut=document.getElementById('cutting').value;
+  const crease=document.getElementById('creasing').value;
+  const lam=document.getElementById('lamination').value;
+  const bind=document.getElementById('binding').value;
+  const desc=document.getElementById('description').value;
+
+  let rows="";
+  document.querySelectorAll("#itemsBody tr").forEach(tr=>{
+    const inputs=tr.querySelectorAll("input");
+    if(inputs.length>=4){
+      rows+=`<tr><td>${inputs[0].value}</td><td>${inputs[1].value}</td><td>${inputs[2].value}</td></tr>`;
+    }
+  });
+
+  const preview=`
+  <!doctype html><html><head><meta charset='utf-8'><title>Job Card Preview</title>
+  <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap' rel='stylesheet'>
+  <style>
+  body{font-family:Poppins,sans-serif;background:linear-gradient(135deg,#f0f6f9,#dbeeff);
+  display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}
+  .job-card{width:860px;background:linear-gradient(180deg,#eaf6ff 0%,#d4edfc 100%);
+  border-radius:12px;padding:28px;box-shadow:0 8px 22px rgba(0,0,0,0.15);}
+  .header{display:flex;justify-content:space-between;align-items:flex-start;}
+  .logo{display:flex;gap:10px;align-items:center;}
+  .logo img{width:70px;height:42px;object-fit:contain;border-radius:8px;}
+  .title{font-weight:800;font-size:22px;color:#0078b7;}
+  table{width:100%;border-collapse:collapse;margin-top:16px;}
+  th,td{padding:10px;border-bottom:1px dashed rgba(0,0,0,0.1);}
+  th{background:linear-gradient(90deg,#e8f7ff,#d2ecff);color:#0078b7;text-align:left;}
+  .small-box{display:flex;justify-content:space-between;padding:8px;border:1px solid rgba(0,0,0,0.08);
+  border-radius:6px;background:rgba(255,255,255,0.9);margin-top:6px;}
+  .signature-img{width:100px;height:40px;object-fit:contain;}
+  </style></head><body>
+  <div class='job-card'>
+    <div class='header'>
+      <div class='logo'><img src='https://upload.wikimedia.org/wikipedia/commons/a/ab/Logo_TV_2015.png'>
+        <div><div><strong>${company}</strong></div><div style='font-size:12px;color:#5c6f78;'>${sub}</div></div>
+      </div>
+      <div><div class='title'>JOB CARD</div><div style='font-size:13px;color:#5c6f78;'>Sl. No.: ${slno}</div></div>
+    </div>
+    <div style='display:flex;gap:12px;margin-top:18px;'>
+      <div style='flex:1;'><b>To:</b> ${to}</div>
+      <div style='width:170px;'><b>Date:</b> ${date}</div>
+    </div>
+    <table><thead><tr><th>S.No.</th><th>Description</th><th>Qty</th></tr></thead><tbody>${rows}</tbody></table>
+    <p><b>Cutting:</b> ${cut} &nbsp;&nbsp; <b>Creasing:</b> ${crease} &nbsp;&nbsp; <b>Lamination:</b> ${lam} &nbsp;&nbsp; <b>Binding:</b> ${bind}</p>
+    <p><b>Description / Note:</b> ${desc || "(No additional notes)"}</p>
+    <div style='display:flex;gap:12px;margin-top:20px;'>
+      <div class='small-box'><div>Operator Signature</div><img src='https://clipart-library.com/images/8TEbRgRGc.jpg' class='signature-img'></div>
+      <div class='small-box'><div>Machine Operator Signature</div><img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRn0qwgeE8aOabkYWl1cqvUb0CWeWj98nX6Eg&s' class='signature-img'></div>
+    </div>
+  </div></body></html>`;
+
+  const w=window.open('','_blank');
+  w.document.write(preview);
+  w.document.close();
+}
+</script>
+
+</body>
+</html>
